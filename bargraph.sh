@@ -40,14 +40,12 @@ function f_count()
     echo "extensions = ${EXTENSIONS}"
     echo "dir path = ${_DIR_PATH}"
 
-    local _F_CNT_RAW=$(ls -1 ${_DIR_PATH} \
-        | grep -v "[$/]" \
-        | awk -F. '/./ {print $NF}' \
-        | sort )
-
     if [[ ${NUM_SORT} = "SORTED" ]]
     then
-        _F_CNT_TOT=$(echo "${_F_CNT_RAW}" \
+        _F_CNT_TOT=$(ls -1 ${_DIR_PATH} \
+            | grep -v "[$/]" \
+            | awk -F. '/./ {print $NF}' \
+            | sort \
             | uniq -c \
             | sort -k 1,1 -r)
         if [[ $(echo ${_F_CNT_TOT} \
@@ -59,7 +57,10 @@ function f_count()
             exit 1
         fi
     else
-        _F_CNT_TOT=$(echo "${_F_CNT_RAW}" \
+        _F_CNT_TOT=$(ls -1 ${_DIR_PATH} \
+            | grep -v "[$/]" \
+            | awk -F. '/./ {print $NF}' \
+            | sort \
             | uniq -c )
         if [[ $(echo ${_F_CNT_TOT} \
             | awk '{total = total + $1}END{print total}') \
@@ -78,9 +79,12 @@ function f_count()
         _F_CNT=${_F_CNT_TOT}
     fi
 
-    local _F_CNT_NM=$(echo "${_F_CNT_RAW}" \
+    local _F_CNT_NM=$(ls -1 ${_DIR_PATH} \
+        | grep -v "[$/]" \
+        | awk -F. '/./ {print $NF}' \
+        | sort \
         | uniq \
-        | wc -L)
+        | -wc -L )
 
     if [[ ${_F_CNT_NM} -le 9 ]]
     then
