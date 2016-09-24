@@ -49,9 +49,25 @@ function f_count()
         _F_CNT_TOT=$(echo "${_F_CNT_RAW}" \
             | uniq -c \
             | sort -k 1,1 -r)
+        if [[ $(echo ${_F_CNT_TOT} \
+            | awk '{total = total + $1}END{print total}') \
+            -le $(echo ${_F_CNT_TOT} \
+            | wc -l) ]]
+        then
+            printf "%s\n" "One file one extension."
+            exit 1
+        fi
     else
         _F_CNT_TOT=$(echo "${_F_CNT_RAW}" \
             | uniq -c )
+        if [[ $(echo ${_F_CNT_TOT} \
+            | awk '{total = total + $1}END{print total}') \
+            -le $(echo ${_F_CNT_TOT} \
+            | wc -l) ]]
+        then
+            printf "%s\n" "One file one extension."
+            exit 1
+        fi
     fi
 
     if [[ -z ${_F_CNT_TOT} ]]
