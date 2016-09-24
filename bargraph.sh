@@ -33,45 +33,35 @@ function f_count()
 {
     if [[ -n ${EXTENSIONS} ]]
     then
-        _DIR_PATH="${DIR_PATH}${EXTENSIONS}"
-        #eval $(echo _DIR_PATH=${DIR_PATH}${EXTENSIONS})
+        _DIR_PATH="ls -1 ${DIR_PATH}${EXTENSIONS}"
     else
-        _DIR_PATH=${DIR_PATH}
+        _DIR_PATH="ls -1 ${DIR_PATH}"
     fi
 
-    echo "extensions = ${EXTENSIONS}"
-    echo "dir path = ${_DIR_PATH}"
+    _F_CNT_TOT=$(echo ${_DIR_PATH} \
+        | . /dev/fd/0 \
+        | awk -F. '/./ {print $NF}' \
+        | grep -v "[$/]" \
+        | sort \
+        | uniq -c )
 
     if [[ ${NUM_SORT} = "SORTED" ]]
     then
-        _F_CNT_TOT=$(ls -1 ${_DIR_PATH} \
-            | grep -v "[$/]" \
-            | awk -F. '/./ {print $NF}' \
-            | sort \
-            | uniq -c \
+        _F_CNT_TOT=$(echo ${_F_CNT_TOT} \
             | sort -k 1,1 -r)
-        if [[ $(echo ${_F_CNT_TOT} \
-            | awk '{total = total + $1}END{print total}') \
-            -le $(echo ${_F_CNT_TOT} \
-            | wc -l) ]]
-        then
-            printf "%s\n" "One file one extension."
-            exit 1
-        fi
-    else
-        _F_CNT_TOT=$(ls -1 ${_DIR_PATH} \
-            | grep -v "[$/]" \
-            | awk -F. '/./ {print $NF}' \
-            | sort \
-            | uniq -c )
-        if [[ $(echo ${_F_CNT_TOT} \
-            | awk '{total = total + $1}END{print total}') \
-            -le $(echo ${_F_CNT_TOT} \
-            | wc -l) ]]
-        then
-            printf "%s\n" "One file one extension."
-            exit 1
-        fi
+        echo ${_F_CNT_TOT}
+            # | tr "," "\n" \
+            # | sed 's/\(.\{2\}\)/\1,/g' \
+            # | sed 's/\>/,/g;s/,$//' \
+    fi
+
+    if [[ $(echo ${_F_CNT_TOT} \
+        | awk '{total = total + $1}END{print total}') \
+        -le $(echo ${_F_CNT_TOT} \
+        | wc -l) ]]
+    then
+        printf "%s\n" "One file one extension."
+        exit 1
     fi
 
     if [[ -z ${_F_CNT_TOT} ]]
@@ -81,12 +71,13 @@ function f_count()
         _F_CNT=${_F_CNT_TOT}
     fi
 
-    local _F_CNT_NM=$(ls -1 ${_DIR_PATH} \
-        | grep -v "[$/]" \
+    local _F_CNT_NM=$(echo ${_DIR_PATH} \
+        | . /dev/fd/0 \
         | awk -F. '/./ {print $NF}' \
+        | grep -v "[$/]" \
         | sort \
         | uniq \
-        | -wc -L )
+        | wc -L )
 
     if [[ ${_F_CNT_NM} -le 9 ]]
     then
