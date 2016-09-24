@@ -16,7 +16,9 @@ function main()
         printf "%s\n" "Check your path"
         exit 1
     else
-        if [[ $(find ${DIR_PATH} -maxdepth 1 -type f -name "*.*" \
+        if [[ $(ls -1 ${DIR_PATH} \
+            | grep -v "[$/]" \
+            | awk -F. '/./ {print $NF}' \
             | wc -l) -le 2 ]]
         then
             printf "%s\n" "2 files or less with extensions in ${DIR_PATH}"
