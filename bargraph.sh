@@ -31,16 +31,17 @@ function f_count()
 {
     if [[ -n ${EXTENSIONS} ]]
     then
-        #_DIR_PATH="${DIR_PATH}${EXTENSIONS}"
-        eval $(echo _DIR_PATH=${DIR_PATH}${EXTENSIONS})
+        _DIR_PATH="${DIR_PATH}${EXTENSIONS}"
+        #eval $(echo _DIR_PATH=${DIR_PATH}${EXTENSIONS})
     else
         _DIR_PATH=${DIR_PATH}
     fi
 
-    #echo "extensions = ${EXTENSIONS}"
-    #echo "dir path = ${_DIR_PATH}"
+    echo "extensions = ${EXTENSIONS}"
+    echo "dir path = ${_DIR_PATH}"
 
-    local _F_CNT_RAW=$(find "${_DIR_PATH}" ${MAX_DEPTH} -type f -printf "%f\n" \
+    local _F_CNT_RAW=$(ls -1 ${_DIR_PATH} \
+        | grep -v "[$/]" \
         | awk -F. '/./ {print $NF}' \
         | sort )
 
