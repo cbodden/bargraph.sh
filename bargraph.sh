@@ -31,11 +31,18 @@ function main()
 
 function f_count()
 {
+    if [[ ${RCRSV} = "REC" ]]
+    then
+        LS_OPT="-1R"
+    else
+        LS_OPT="-1"
+    fi
+
     if [[ -n ${EXTENSIONS} ]]
     then
-        _DIR_PATH="ls -1 ${DIR_PATH}${EXTENSIONS}"
+        _DIR_PATH="ls ${LS_OPT} ${DIR_PATH}${EXTENSIONS}"
     else
-        _DIR_PATH="ls -1 ${DIR_PATH}"
+        _DIR_PATH="ls ${LS_OPT} ${DIR_PATH}"
     fi
 
     _F_CNT_TOT=$(echo ${_DIR_PATH} \
@@ -53,15 +60,6 @@ function f_count()
             # | tr "," "\n" \
             # | sed 's/\(.\{2\}\)/\1,/g' \
             # | sed 's/\>/,/g;s/,$//' \
-    fi
-
-    if [[ $(echo ${_F_CNT_TOT} \
-        | awk '{total = total + $1}END{print total}') \
-        -le $(echo ${_F_CNT_TOT} \
-        | wc -l) ]]
-    then
-        printf "%s\n" "One file one extension."
-        exit 1
     fi
 
     if [[ -z ${_F_CNT_TOT} ]]
@@ -99,8 +97,14 @@ function out()
 
     # total number of countable elements
     local VMIN=1
-    local VMAX=$(echo "${_F_CNT}" \
-        | awk 'BEGIN {max=0} {if($1>max) max=$1} END {print max}')
+    if [[ $(echo "${_F_CNT}" \
+        | awk 'BEGIN {max=0} {if($1>max) max=$1} END {print max}') -eq 1 ]]
+    then
+        local VMAX="2"
+    else
+        local VMAX=$(echo "${_F_CNT}" \
+            | awk 'BEGIN {max=0} {if($1>max) max=$1} END {print max}')
+    fi
 
     # length of bar
     local _TOT_COLS=$(tput cols)
@@ -168,9 +172,7 @@ DESCRIPTION
 
     -h      Show this file (usage).
 
-    -m      Max depth to search. With this option set, the script
-            will search a folder recursively.
-            Default is a depth of "1".
+    -r      Recursive.
 
     -s      This sorts output according to most files.
             Default is sorted by name.
@@ -190,9 +192,9 @@ EOL
 # the actual selector of the script
 BAR_CHR="#"
 EXTENSIONS=""
-MAX_DEPTH="-maxdepth 1"
 NUM_SORT="UNSORTED"
-while getopts "b:d:e:hmsv" OPT
+RCRSV=""
+while getopts "b:d:e:hrsv" OPT
 do
     case "${OPT}" in
         'b')
@@ -218,8 +220,8 @@ do
         'h')
             usage
             ;;
-        'm')
-            MAX_DEPTH=""
+        'r')
+            RCRSV="REC"
             ;;
         's')
             NUM_SORT="SORTED"
