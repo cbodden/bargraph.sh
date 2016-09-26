@@ -47,8 +47,7 @@ function f_count()
 
     _F_CNT_TOT=$(echo ${_DIR_PATH} \
         | . /dev/fd/0 \
-        | awk -F. '/./ {print $NF}' \
-        | grep -v "[$/]" \
+        | awk -F. '!/\// && /./ {print $NF}' \
         | sort \
         | uniq -c )
 
@@ -56,10 +55,6 @@ function f_count()
     then
         _F_CNT_TOT=$(echo ${_F_CNT_TOT} \
             | sort -k 1,1 -r)
-        echo ${_F_CNT_TOT}
-            # | tr "," "\n" \
-            # | sed 's/\(.\{2\}\)/\1,/g' \
-            # | sed 's/\>/,/g;s/,$//' \
     fi
 
     if [[ -z ${_F_CNT_TOT} ]]
@@ -71,8 +66,7 @@ function f_count()
 
     local _F_CNT_NM=$(echo ${_DIR_PATH} \
         | . /dev/fd/0 \
-        | awk -F. '/./ {print $NF}' \
-        | grep -v "[$/]" \
+        | awk -F. '!/\// && /./ {print $NF}' \
         | sort \
         | uniq \
         | wc -L )
