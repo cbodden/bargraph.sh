@@ -45,16 +45,20 @@ function f_count()
         _DIR_PATH="ls ${LS_OPT} ${DIR_PATH}"
     fi
 
-    _F_CNT_TOT=$(echo ${_DIR_PATH} \
-        | . /dev/fd/0 \
-        | awk -F. '!/\// && /./ {print $NF}' \
-        | sort \
-        | uniq -c )
-
     if [[ ${NUM_SORT} = "SORTED" ]]
     then
-        _F_CNT_TOT=$(echo ${_F_CNT_TOT} \
-            | sort -k 1,1 -r)
+        _F_CNT_TOT=$(echo ${_DIR_PATH} \
+            | . /dev/fd/0 \
+            | awk -F. '!/\// && /./ {print $NF}' \
+            | sort \
+            | uniq -c \
+            | sort -nr)
+    else
+        _F_CNT_TOT=$(echo ${_DIR_PATH} \
+            | . /dev/fd/0 \
+            | awk -F. '!/\// && /./ {print $NF}' \
+            | sort \
+            | uniq -c )
     fi
 
     if [[ -z ${_F_CNT_TOT} ]]
