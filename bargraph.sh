@@ -17,8 +17,7 @@ function main()
         exit 1
     else
         if [[ $(ls -1 ${DIR_PATH} \
-            | grep -v "[$/]" \
-            | awk -F. '/./ {print $NF}' \
+            | awk -F. '!/\// && /./ {print $NF}' \
             | wc -l) -le 2 ]]
         then
             printf "%s\n" "2 files or less with extensions in ${DIR_PATH}"
@@ -33,9 +32,9 @@ function f_count()
 {
     if [[ ${RCRSV} = "REC" ]]
     then
-        LS_OPT="-1R"
+        LS_OPT="-1FR"
     else
-        LS_OPT="-1"
+        LS_OPT="-1F"
     fi
 
     if [[ -n ${EXTENSIONS} ]]
