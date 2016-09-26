@@ -48,14 +48,16 @@ function f_count()
     then
         _F_CNT_TOT=$(echo ${_DIR_PATH} \
             | . /dev/fd/0 \
-            | awk -F. '!/\// && /./ {print $NF}' \
+            | awk -F. '/./ {print $NF}' \
+            | grep -v / \
             | sort \
             | uniq -c \
             | sort -nr)
     else
         _F_CNT_TOT=$(echo ${_DIR_PATH} \
             | . /dev/fd/0 \
-            | awk -F. '!/\// && /./ {print $NF}' \
+            | awk -F. '/./ {print $NF}' \
+            | grep -v / \
             | sort \
             | uniq -c )
     fi
@@ -69,7 +71,8 @@ function f_count()
 
     local _F_CNT_NM=$(echo ${_DIR_PATH} \
         | . /dev/fd/0 \
-        | awk -F. '!/\// && /./ {print $NF}' \
+        | awk -F. '/./ {print $NF}' \
+        | grep -v / \
         | sort \
         | uniq \
         | wc -L )
@@ -167,6 +170,12 @@ DESCRIPTION
             This is to specify the path to be used. Need to input
             this for the script to work.
 
+    -e [ext{,ext,ext}]
+            This option is to select a single or list of extensions
+            to show in the bargraph.
+            Usage is either { -e "foo" } for single extension or
+            { -e "foo,bar,baz" } for multiple. Always comma separated.
+
     -h      Show this file (usage).
 
     -r      Recursive.
@@ -206,13 +215,20 @@ do
             fi
             ;;
         'e')
-            EXTENSIONS="*.{$(echo ${OPTARG} \
-                | tr -d " " \
+            if [[ $( echo ${OPTARG} \
                 | tr "," "\n" \
-                | sort \
-                | uniq \
-                | awk -v ORS=, '{print $1}' \
-                | head -c -1)}"
+                | wc -l) -le 1 ]]
+            then
+                EXTENSIONS="*.${OPTARG}"
+            else
+                EXTENSIONS="*.{$(echo ${OPTARG} \
+                    | tr -d " " \
+                    | tr "," "\n" \
+                    | sort \
+                    | uniq \
+                    | awk -v ORS=, '{print $1}' \
+                    | head -c -1)}"
+            fi
             ;;
         'h')
             usage
