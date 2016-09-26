@@ -217,9 +217,10 @@ do
         'e')
             if [[ $( echo ${OPTARG} \
                 | tr "," "\n" \
+                | sed '/^$/d' \
                 | wc -l) -le 1 ]]
             then
-                EXTENSIONS="*.${OPTARG}"
+                EXTENSIONS="*.${OPTARG//,/}"
             else
                 EXTENSIONS="*.{$(echo ${OPTARG} \
                     | tr -d " " \
