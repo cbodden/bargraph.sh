@@ -2,6 +2,7 @@
 
 LC_ALL=C
 LANG=C
+IFS=$'\n'
 set -o nounset
 set -o pipefail
 set -o errexit
@@ -48,16 +49,18 @@ function f_count()
     then
         _F_CNT_TOT=$(echo ${_DIR_PATH} \
             | . /dev/fd/0 \
-            | awk -F. '/./ {print $NF}' \
-            | grep -v / \
+            | sed 's/ //g' \
+            | sed 's/^.*\///g' \
+            | awk -F. '!/\// && /./ {print $NF}' \
             | sort \
             | uniq -c \
             | sort -nr)
     else
         _F_CNT_TOT=$(echo ${_DIR_PATH} \
             | . /dev/fd/0 \
-            | awk -F. '/./ {print $NF}' \
-            | grep -v / \
+            | sed 's/ //g' \
+            | sed 's/^.*\///g' \
+            | awk -F. '!/\// && /./ {print $NF}' \
             | sort \
             | uniq -c )
     fi
@@ -71,8 +74,9 @@ function f_count()
 
     local _F_CNT_NM=$(echo ${_DIR_PATH} \
         | . /dev/fd/0 \
-        | awk -F. '/./ {print $NF}' \
-        | grep -v / \
+        | sed 's/ //g' \
+        | sed 's/^.*\///g' \
+        | awk -F. '!/\// && /./ {print $NF}' \
         | sort \
         | uniq \
         | wc -L )
