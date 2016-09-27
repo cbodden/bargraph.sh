@@ -11,6 +11,8 @@ extensions contained in a dir.<br>
 Usage
 ----
 
+![bargraph-gif](bargraph.gif)
+
 <pre><code>
 
 NAME
