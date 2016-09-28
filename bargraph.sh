@@ -184,16 +184,8 @@ DESCRIPTION
     -s      This sorts output according to most files.
             Default is sorted by name.
 
-    -v      Show version.
-
 EOL
 exit 0
-}
-
-function version()
-{
-    cat <<EOL
-EOL
 }
 
 # the actual selector of the script
@@ -201,7 +193,7 @@ BAR_CHR="▒"
 EXTENSIONS=""
 NUM_SORT="UNSORTED"
 RCRSV=""
-while getopts "b:d:e:hrsv" OPT
+while getopts "b:d:e:hrs" OPT
 do
     case "${OPT}" in
         'b')
@@ -240,9 +232,6 @@ do
             ;;
         's')
             NUM_SORT="SORTED"
-            ;;
-        'v')
-            version
             ;;
         *)
             usage ;;
