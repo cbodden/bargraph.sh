@@ -48,8 +48,6 @@ DESCRIPTION
     -s      This sorts output according to most files.
             Default is sorted by name.
 
-    -v      Show version.
-
 </code></pre>
 
 Requirements
