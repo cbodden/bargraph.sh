@@ -165,7 +165,7 @@ DESCRIPTION
             This is to specify what character you want to use to
             draw your bar graphs. If this option is used, place
             the character in quotes (ex: "#").
-            Default is "#"
+            Default is "▒"
 
     -d [path]
             This is to specify the path to be used. Need to input
@@ -197,7 +197,7 @@ EOL
 }
 
 # the actual selector of the script
-BAR_CHR="#"
+BAR_CHR="▒"
 EXTENSIONS=""
 NUM_SORT="UNSORTED"
 RCRSV=""
